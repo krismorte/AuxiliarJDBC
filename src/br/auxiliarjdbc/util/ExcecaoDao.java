@@ -11,21 +11,22 @@ import java.sql.SQLException;
  *
  * @author krisnamourtscf
  */
-public class ExcecaoDao extends SQLException {
+public class ExcecaoDao extends SQLException{
 
     private String message;
-
+    
     public ExcecaoDao() {
         super();
     }
-
+    
+    
     public ExcecaoDao(String msg) {
         super();
-        this.message = msg;
+        this.message=msg;
     }
-
+    
     @Override
-    public String getMessage() {
-        return message;//"Não existe letra B em sua frase";
-    }
+	public String getMessage(){
+		return message;//"Não existe letra B em sua frase";
+	}
 }
