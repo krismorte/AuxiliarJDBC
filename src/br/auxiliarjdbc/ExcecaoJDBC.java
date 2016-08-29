@@ -13,6 +13,5 @@ import br.auxiliarjdbc.util.ExcecaoDao;
  */
 public interface ExcecaoJDBC {
     
-    public void lancaExcecao(boolean exibeStackTrace, Exception exception) throws ExcecaoDao;
-    public String getNomeClasse();
+    public void lancaExcecao(Exception exception) throws ExcecaoDao;   
 }

@@ -25,18 +25,11 @@ public abstract class EntidadeJDBC<T> {
     private Integer comandoEscolhido;
     private HashMap<Integer, String> comandosSQL = new HashMap();
     private Connection conexao;
-    private String nomeClasse;
-    private boolean exibeStackTrace;
     private ExcecaoJDBC excecao;
 
-    public EntidadeJDBC(String nomeClasse) {
-        this.nomeClasse = nomeClasse;
-        this.exibeStackTrace = false;
-    }
+    public abstract void incluir() throws ExcecaoDao;
 
-    public abstract void incluir(T model) throws ExcecaoDao;
-
-    public abstract void atualizar(T model) throws ExcecaoDao;
+    public abstract void atualizar() throws ExcecaoDao;
 
     public abstract void remover() throws ExcecaoDao;
 
@@ -78,6 +71,15 @@ public abstract class EntidadeJDBC<T> {
         indiceCampo = 1;
     }
 
+    public void preencheComando() throws ExcecaoDao {
+        try {
+            PreparedStatement comando = conexao.prepareCall(getComandoSQL());
+            preencheValores(comando);
+        } catch (SQLException ex) {
+            throw new ExcecaoDao(ex.getMessage());
+        }
+    }
+
     public void preencheComando(PreparedStatement comando) throws ExcecaoDao {
         try {
             preencheValores(comando);
@@ -86,8 +88,37 @@ public abstract class EntidadeJDBC<T> {
         }
     }
 
+    public void preencheComando(String comandoSQL) throws ExcecaoDao {
+        try {
+            PreparedStatement comando = conexao.prepareCall(comandoSQL);
+            preencheValores(comando);
+        } catch (SQLException ex) {
+            throw new ExcecaoDao(ex.getMessage());
+        }
+    }
+
+    public void preencheComando(Object... valores) throws ExcecaoDao {
+        try {
+            PreparedStatement comando = conexao.prepareCall(getComandoSQL());
+            adicionaCampos(valores);
+            preencheValores(comando);
+        } catch (SQLException ex) {
+            throw new ExcecaoDao(ex.getMessage());
+        }
+    }
+
     public void preencheComando(PreparedStatement comando, Object... valores) throws ExcecaoDao {
         try {
+            adicionaCampos(valores);
+            preencheValores(comando);
+        } catch (SQLException ex) {
+            throw new ExcecaoDao(ex.getMessage());
+        }
+    }
+
+    public void preencheComando(String comandoSQL, Object... valores) throws ExcecaoDao {
+        try {
+            PreparedStatement comando = conexao.prepareCall(comandoSQL);
             adicionaCampos(valores);
             preencheValores(comando);
         } catch (SQLException ex) {
@@ -109,11 +140,21 @@ public abstract class EntidadeJDBC<T> {
         exec.execucaoModificacao();
     }
 
-     public ResultSet executaConsulta() throws ExcecaoDao,SQLException {
+    public ResultSet executaConsulta() throws ExcecaoDao, SQLException {
         Executor exec = new ExecutorSQL(this);
         return exec.execucaoConsulta();
     }
-    
+
+    public void finalizaConexaoComSeguranca(Connection con) throws ExcecaoDao {
+        try {
+            if (con != null) {
+                con.close();
+            }
+        } catch (Exception ex) {
+            throw new ExcecaoDao(this.getClass().getName() + ": " + ex.getMessage());
+        }
+    }
+
     public void finalizaConexaoComSeguranca(Connection con, PreparedStatement cmd) throws ExcecaoDao {
         try {
             if (con != null) {
@@ -142,27 +183,6 @@ public abstract class EntidadeJDBC<T> {
     }
 
     /**
-     * @return the nomeClasse
-     */
-    public String getNomeClasse() {
-        return nomeClasse;
-    }
-
-    /**
-     * @return the exibeStackTrace
-     */
-    public boolean isExibeStackTrace() {
-        return exibeStackTrace;
-    }
-
-    /**
-     * @param exibeStackTrace the exibeStackTrace to set
-     */
-    public void setExibeStackTrace(boolean exibeStackTrace) {
-        this.exibeStackTrace = exibeStackTrace;
-    }
-
-    /**
      * @return the excecao
      */
     public ExcecaoJDBC getExcecao() {
@@ -176,6 +196,4 @@ public abstract class EntidadeJDBC<T> {
         this.excecao = excecao;
     }
 
-    
-    
 }

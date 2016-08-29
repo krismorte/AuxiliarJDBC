@@ -18,7 +18,5 @@ public interface Executor {
     public ResultSet execucaoConsulta() throws ExcecaoDao,SQLException;
 
     public void execucaoModificacao() throws ExcecaoDao;
-
-    public void lancaExcecao(boolean exibeStackTrace, Exception exception) throws ExcecaoDao;
     
 }

@@ -36,9 +36,9 @@ public class ExecutorSQL implements ExcecaoJDBC, Executor {
             comando.executeUpdate();
         } catch (Exception e) {
             if (jdbc.getExcecao() != null) {
-                jdbc.getExcecao().lancaExcecao(jdbc.isExibeStackTrace(), e);
+                jdbc.getExcecao().lancaExcecao(e);
             } else {
-                lancaExcecao(jdbc.isExibeStackTrace(), e);
+                lancaExcecao(e);
             }
         } finally {
             jdbc.finalizaConexaoComSeguranca(conexao, comando);
@@ -65,16 +65,8 @@ public class ExecutorSQL implements ExcecaoJDBC, Executor {
     }
 
     @Override
-    public String getNomeClasse() {
-        return jdbc.getNomeClasse();
-    }
-
-    @Override
-    public void lancaExcecao(boolean exibeStackTrace, Exception exception) throws ExcecaoDao {
-        if (exibeStackTrace) {
-            exception.printStackTrace();
-        }
-        throw new ExcecaoDao(getNomeClasse() + ": " + exception.getMessage());
+    public void lancaExcecao(Exception exception) throws ExcecaoDao {
+        throw new ExcecaoDao(ExecutorSQL.class.getName() + ": " + exception.getMessage());
     }
 
 }
