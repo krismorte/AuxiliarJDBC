@@ -15,8 +15,8 @@ import java.sql.SQLException;
  */
 public interface Executor {
 
-    public ResultSet execucaoConsulta() throws ExcecaoDao,SQLException;
+    public ResultSet execucaoConsulta(EntidadeJDBC jdbc) throws ExcecaoDao,SQLException;
 
-    public void execucaoModificacao() throws ExcecaoDao;
+    public void execucaoModificacao(EntidadeJDBC jdbc) throws ExcecaoDao;
     
 }

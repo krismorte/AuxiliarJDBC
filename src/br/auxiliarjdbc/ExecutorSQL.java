@@ -17,14 +17,8 @@ import java.sql.SQLException;
  */
 public class ExecutorSQL implements ExcecaoJDBC, Executor {
 
-    private EntidadeJDBC jdbc;
-
-    public ExecutorSQL(EntidadeJDBC jdbc) {
-        this.jdbc = jdbc;
-    }
-
     @Override
-    public void execucaoModificacao() throws ExcecaoDao {
+    public void execucaoModificacao(EntidadeJDBC jdbc) throws ExcecaoDao {
         PreparedStatement comando = null;
         Connection conexao = null;
         try {
@@ -46,22 +40,15 @@ public class ExecutorSQL implements ExcecaoJDBC, Executor {
     }
 
     @Override
-    public ResultSet execucaoConsulta() throws ExcecaoDao, SQLException {
+    public ResultSet execucaoConsulta(EntidadeJDBC jdbc) throws ExcecaoDao, SQLException {
         PreparedStatement comando = null;
         Connection conexao = null;
-        //try {
         String comandoSQL = jdbc.getComandoSQL();
         conexao = jdbc.getConexao();
 
         comando = conexao.prepareStatement(comandoSQL);
         jdbc.preencheComando(comando);
         return comando.executeQuery();
-        /*} catch (Exception e) {
-         lancaExcecao(jdbc.isExibeStackTrace(), e);
-         return null;
-         } finally {
-         jdbc.finalizaConexaoComSeguranca(conexao, comando);
-         }*/
     }
 
     @Override

@@ -5,13 +5,11 @@
  */
 package br.auxiliarjdbc;
 
-import br.auxiliarjdbc.util.ExcecaoDao;
-
 /**
  *
  * @author krismorte
  */
 public interface ExcecaoJDBC {
     
-    public void lancaExcecao(Exception exception) throws ExcecaoDao;   
+    public void lancaExcecao(Exception exception) throws br.auxiliarjdbc.util.ExcecaoDao;   
 }
