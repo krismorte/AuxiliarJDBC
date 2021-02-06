@@ -64,6 +64,10 @@ public abstract class EntidadeJDBC<T> {
         comandoEscolhido = identificador;
     }
 
+     public Integer getComandoSQLEscolhido() {
+        return comandoEscolhido;
+    }
+
     public String getComandoSQL() throws ExcecaoDao {
         if (comandoEscolhido == -1421515) {
             throw new ExcecaoDao("ExcecaoJDBC: Sem comando a ser executado");
@@ -72,11 +76,13 @@ public abstract class EntidadeJDBC<T> {
     }
 
     private void adicionaCampo(Object valor) {
+        if (valor != null) {
         if (valor instanceof java.util.Date) {
             valor = new Date(((java.util.Date) valor).getTime());
         } else if (valor instanceof java.util.Calendar) {
             java.util.Date dataTmp = ((java.util.Calendar) valor).getTime();
             valor = new Date(dataTmp.getTime());
+        }
         }
         campos.put(indiceCampo, valor);
         indiceCampo++;
